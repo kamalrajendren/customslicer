@@ -1,0 +1,21 @@
+{
+  "visual": {
+    "name": "customslicer",
+    "displayName": "customslicer",
+    "guid": "customslicer74C5D9B5F9C04B42B5C37E3EE1A4B471",
+    "visualClassName": "Visual",
+    "version": "1.0.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "5.6.0",
+  "author": { "name": "", "email": "" },
+  "assets": { "icon": "assets/icon.png" },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": null,
+  "stringResources": [],
+  "version": "1.0.0.0"
+}
