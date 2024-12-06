@@ -6,6 +6,19 @@ p em {
   background: yellow;
   padding: 5px;
 }
+.slicer-container {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  cursor: pointer;
+}
+.slicer-container ul li {
+  list-style: none;
+  font-size: 25px;
+}
+.slicer-container ul span:hover {
+  border-bottom: 1px solid;
+}
 
 
 /*# sourceMappingURL=https://localhost:8080/assets/visual.css.map*/

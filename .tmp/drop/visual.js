@@ -85,6 +85,37 @@ class VisualFormattingSettingsModel extends FormattingSettingsModel {
 
 /***/ }),
 
+/***/ 200:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   d: () => (/* binding */ transformRawData)
+/* harmony export */ });
+
+const transformRawData = (options) => {
+    let transformedData = {};
+    try {
+        const values = options.dataViews[0].categorical?.categories[0].values;
+        const tableNameDetails = options.dataViews[0].categorical?.categories[0].source.queryName.split('.');
+        transformedData = {
+            values,
+            table: tableNameDetails[0],
+            column: tableNameDetails[1]
+        };
+    }
+    catch (error) {
+        transformedData = {
+            values: [],
+            table: '',
+            column: '',
+        };
+    }
+    return transformedData;
+};
+
+
+/***/ }),
+
 /***/ 258:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -93,31 +124,33 @@ class VisualFormattingSettingsModel extends FormattingSettingsModel {
 /* harmony export */ });
 /* harmony import */ var powerbi_visuals_utils_formattingmodel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(674);
 /* harmony import */ var _settings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(939);
+/* harmony import */ var _transformData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(200);
 /*
-*  Power BI Visual CLI
-*
-*  Copyright (c) Microsoft Corporation
-*  All rights reserved.
-*  MIT License
-*
-*  Permission is hereby granted, free of charge, to any person obtaining a copy
-*  of this software and associated documentation files (the ""Software""), to deal
-*  in the Software without restriction, including without limitation the rights
-*  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-*  copies of the Software, and to permit persons to whom the Software is
-*  furnished to do so, subject to the following conditions:
-*
-*  The above copyright notice and this permission notice shall be included in
-*  all copies or substantial portions of the Software.
-*
-*  THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-*  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-*  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-*  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-*  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-*  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-*  THE SOFTWARE.
-*/
+ *  Power BI Visual CLI
+ *
+ *  Copyright (c) Microsoft Corporation
+ *  All rights reserved.
+ *  MIT License
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the ""Software""), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
+
 
 
 
@@ -125,17 +158,42 @@ class VisualFormattingSettingsModel extends FormattingSettingsModel {
 class Visual {
     target;
     updateCount;
+    data;
+    container;
+    slicerItems;
     formattingSettings;
     formattingSettingsService;
     constructor(options) {
-        console.log('Visual constructor', options);
+        console.log("Visual constructor", options);
         this.formattingSettingsService = new powerbi_visuals_utils_formattingmodel__WEBPACK_IMPORTED_MODULE_0__/* .FormattingSettingsService */ .O();
         this.target = options.element;
         this.updateCount = 0;
+        this.data = null;
+        if (document) {
+            this.container = document.createElement("div");
+            this.container.classList.add("slicer-container");
+            this.slicerItems = document.createElement("ul");
+            this.container.appendChild(this.slicerItems);
+            this.target.appendChild(this.container);
+        }
+    }
+    getListElement(value) {
+        let slicerItem = document.createElement("li");
+        let spanContent = document.createElement("span");
+        spanContent.innerText = value;
+        slicerItem.appendChild(spanContent);
+        this.slicerItems.append(slicerItem);
     }
     update(options) {
-        this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(_settings__WEBPACK_IMPORTED_MODULE_1__/* .VisualFormattingSettingsModel */ .S, options.dataViews[0]);
-        console.log('Visual update', options);
+        this.formattingSettings =
+            this.formattingSettingsService.populateFormattingSettingsModel(_settings__WEBPACK_IMPORTED_MODULE_1__/* .VisualFormattingSettingsModel */ .S, options.dataViews[0]);
+        this.data = (0,_transformData__WEBPACK_IMPORTED_MODULE_2__/* .transformRawData */ .d)(options);
+        while (this.slicerItems.firstChild) {
+            this.slicerItems.firstChild.remove();
+        }
+        for (const value of this.data.values) {
+            this.getListElement(value);
+        }
     }
     /**
      * Returns properties pane formatting model content hierarchies, properties and latest formatting values, Then populate properties pane.

@@ -6,9 +6,13 @@ import IVisual = powerbi.extensibility.visual.IVisual;
 export declare class Visual implements IVisual {
     private target;
     private updateCount;
+    private data;
+    private container;
+    private slicerItems;
     private formattingSettings;
     private formattingSettingsService;
     constructor(options: VisualConstructorOptions);
+    private getListElement;
     update(options: VisualUpdateOptions): void;
     /**
      * Returns properties pane formatting model content hierarchies, properties and latest formatting values, Then populate properties pane.
